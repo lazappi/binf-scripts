@@ -6,7 +6,9 @@ A collection of useful bioinformatics scripts
 starAlignStats.py
 -----------------
 
-Extract alignment statistics from STAR log files.
+**Description:** Extract alignment statistics from STAR log files.
 
-`starAlignStats.py [-h] -o OUT LOGFILE [LOGFILE ...]`
+**Language:** Python
+
+**Usage:** `starAlignStats.py [-h] -o OUT LOGFILE [LOGFILE ...]`
 
