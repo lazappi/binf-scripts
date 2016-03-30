@@ -23,3 +23,13 @@ alignStats.py
 
 **Usage**: `alignStats.py [-h] -o OUT [-g GTF] [-i INDEX] -t {sam,bam}
            [-p PARALLEL] SAM/BAM [SAM/BAM ...]`
+
+sraDownload.R
+-------------
+
+**Description:** Download files from SRA using ASCP. 
+
+**Language**: R
+
+**Usage**: `sraDownload.R [-h] [-d DATABASE] [-o OUT] [-a ASCPCMD] [-t TYPE]
+           SRA [SRA ...]`
