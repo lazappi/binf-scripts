@@ -20,6 +20,7 @@ alignStats.py
 **Language**: Python
 
 **Details:** Adapted from the `Celloline` [stats script](https://github.com/Teichlab/celloline/blob/master/lib/stats.py).
+More details [here](http://lazappi.id.au/extracting-alignment-statistics-using-python/).
 
 **Usage**: `alignStats.py [-h] -o OUT [-g GTF] [-i INDEX] -t {sam,bam}
            [-p PARALLEL] SAM/BAM [SAM/BAM ...]`
