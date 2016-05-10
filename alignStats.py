@@ -578,11 +578,12 @@ def main():
 
     if args.is_parallel:
         stats = Parallel(n_jobs=args.parallel,
-                         verbose=100)(delayed(process_file)(input_file,
-                                                            args.type,
-                                                            index,
-                                                            args.is_parallel)
-                                      for input_file in args.inputs)
+                         verbose=100,
+                         batch_size=1)(delayed(process_file)(input_file,
+                                                             args.type,
+                                                             index,
+                                                             args.is_parallel)
+                                       for input_file in args.inputs)
     else:
         stats = []
         for input_file in args.inputs:
