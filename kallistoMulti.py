@@ -4,6 +4,7 @@ Run kallisto on multiple files
 """
 
 import argparse
+import os
 import re
 import shlex
 import subprocess
@@ -76,9 +77,12 @@ def main():
     failed = 0
 
     for pair in input_pairs:
+        sample = os.path.basename(pair[0]))
+        sample = sample.split(".")[0]
+        print sample
         cmd_str = "kallisto quant --index " + args.index + " --output-dir "
-        cmd_str += args.output_dir + " " + kal_opts + " " + pair[0] + " "
-        cmd_str += pair[1]
+        cmd_str += args.output_dir + "/" + sample + " " + kal_opts + " "
+        cmd_str += pair[0] + " " + pair[1]
         cmd = shlex.split(cmd_str)
         failed = subprocess.call(cmd)
         if failed:
