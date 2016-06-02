@@ -1,4 +1,4 @@
-#!/use/bin/env python
+#!/usr/bin/env python
 """
 Run kallisto on multiple files
 """
