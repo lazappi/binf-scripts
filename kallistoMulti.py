@@ -5,7 +5,6 @@ Run kallisto on multiple files
 
 import argparse
 import os
-import re
 import shlex
 import subprocess
 import sys
@@ -17,7 +16,7 @@ def get_args():
 
     parser = argparse.ArgumentParser(
         description="Run kallisto on multiple samples",
-        epilog="Any additional, unknown, arguments will be passed to kallisto. These must go after the input files.")
+        epilog="Any additional, unknown, arguments will be passed to kallisto.")
     #parser.add_argument("inputs",
     #                    metavar="FASTQ",
     #                    nargs="+",
@@ -40,31 +39,6 @@ def get_args():
     return args, kal_opts
 
 
-#def pair_inputs(inputs, regex1, regex2):
-#    """
-#    Take a list of inputs and pair them based on two regular expressions
-#    """
-#
-#    inputs1 = []
-#    inputs2 = []
-#
-#    for input_file in inputs:
-#        if re.search(regex1, input_file):
-#            inputs1.append(input_file)
-#        elif re.search(regex2, input_file):
-#            inputs2.append(input_file)
-#        else:
-#            sys.exit("""An input did not match either regex. You may need to
-#                     adjust your patterns""")
-#
-#    if len(inputs1) == len(inputs2):
-#        pairs = zip(inputs1, inputs2)
-#        return pairs
-#    else:
-#        sys.exit("""Different numbers of inputs matched each regualar
-#                 expression. You may need to adjust your patterns.""")
-
-
 def main():
     """
     Run main code
@@ -83,7 +57,7 @@ def main():
         sample = os.path.basename(pair[0])
         sample = sample.split(".")[0]
         sample_count += 1
-        print "Quantifying sample", sample_count, "of", len(pairs), "-", sample
+        print "Quantifying sample", sample_count, "of", len(input_pairs), "-", sample
         cmd_str = "kallisto quant --index " + args.index + " --output-dir "
         cmd_str += args.output_dir + "/" + sample + " " + kal_opts + " "
         cmd_str += pair[0] + " " + pair[1]
@@ -93,6 +67,7 @@ def main():
             sys.exit("kallisto command '" + cmd_str + "' failed to run")
         print "Sample", sample, "complete\n"
     print "Done!"
+
 
 if __name__ == "__main__":
     main()
