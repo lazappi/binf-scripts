@@ -42,5 +42,14 @@ sampleFastq.R
 
 **Language:** R
 
-**Usage**: `sampleFastq [-h] -1 PAIR1 [PAIR1 ...] [-2 [PAIR2 [PAIR2 ...]]]
+**Usage:** `sampleFastq [-h] -1 PAIR1 [PAIR1 ...] [-2 [PAIR2 [PAIR2 ...]]]
            [-n NREADS] [-s SEED] [-o OUTPATH]`
+
+kallistoMerge.R
+---------------
+
+**Description:** Merge output from multiple kallisto runs
+
+**Language:** R
+
+**Usage:** `kallistoMerge [-h] -d DIRECTORY -t TX2GENE [-o OUTPATH]`
