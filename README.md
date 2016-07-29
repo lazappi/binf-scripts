@@ -45,10 +45,20 @@ sampleFastq.R
 **Usage:** `sampleFastq [-h] -1 PAIR1 [PAIR1 ...] [-2 [PAIR2 [PAIR2 ...]]]
            [-n NREADS] [-s SEED] [-o OUTPATH]`
 
+kallistoMulti.py
+----------------
+
+**Description:** Run kallisto over multiple FASTQ files.
+
+**Language:** Python
+
+**Usage:** `kallistoMulti [-h] -i INDEX -o OUTPUT_DIR [-1 READ1 [READ1 ...]]
+            [-2 READ2 [READ2 ...]]`
+
 kallistoMerge.R
 ---------------
 
-**Description:** Merge output from multiple kallisto runs
+**Description:** Merge output from multiple kallisto runs.
 
 **Language:** R
 
