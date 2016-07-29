@@ -17,7 +17,7 @@ alignStats.py
 
 **Description:** Extract alignment statistics from SAM/BAM files.
 
-**Language**: Python
+**Language:** Python
 
 **Details:** Adapted from the `Celloline` [stats script](https://github.com/Teichlab/celloline/blob/master/lib/stats.py).
 More details [here](http://lazappi.id.au/extracting-alignment-statistics-using-python/).
@@ -28,9 +28,38 @@ More details [here](http://lazappi.id.au/extracting-alignment-statistics-using-p
 sraDownload.R
 -------------
 
-**Description:** Download files from SRA using ASCP. 
+**Description:** Download files from SRA using ASCP.
 
-**Language**: R
+**Language:** R
 
-**Usage**: `sraDownload.R [-h] [-d DATABASE] [-o OUT] [-a ASCPCMD] [-t TYPE]
+**Usage:** `sraDownload.R [-h] [-d DATABASE] [-o OUT] [-a ASCPCMD] [-t TYPE]
            SRA [SRA ...]`
+
+sampleFastq.R
+-------------
+
+**Description:** Sample reads from FASTQ files.
+
+**Language:** R
+
+**Usage:** `sampleFastq [-h] -1 PAIR1 [PAIR1 ...] [-2 [PAIR2 [PAIR2 ...]]]
+           [-n NREADS] [-s SEED] [-o OUTPATH]`
+
+kallistoMulti.py
+----------------
+
+**Description:** Run kallisto over multiple FASTQ files.
+
+**Language:** Python
+
+**Usage:** `kallistoMulti [-h] -i INDEX -o OUTPUT_DIR [-1 READ1 [READ1 ...]]
+            [-2 READ2 [READ2 ...]]`
+
+kallistoMerge.R
+---------------
+
+**Description:** Merge output from multiple kallisto runs.
+
+**Language:** R
+
+**Usage:** `kallistoMerge [-h] -d DIRECTORY -t TX2GENE [-o OUTPATH]`
