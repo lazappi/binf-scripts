@@ -33,14 +33,17 @@ tx2gene <- read.delim(args$tx2gene)
 
 message("Reading transcript abundances...")
 txi.tx <- tximport(file.path(args$directory, tsv.files), type = "kallisto",
-                   tx2gene = tx2gene, reader = read_tsv, txOut = TRUE)
+                   tx2gene = tx2gene, reader = read_tsv, txOut = TRUE,
+                   ignoreTxVersion = TRUE)
 message("Summarising to genes...")
-txi.sum <- summarizeToGene(txi.tx, tx2gene)
+txi.sum <- summarizeToGene(txi.tx, tx2gene, ignoreTxVersion = TRUE)
 message("Summarising to genes (scaledTPM)...")
 txi.sum.scl <- summarizeToGene(txi.tx, tx2gene,
+                               ignoreTxVersion = TRUE,
                                countsFromAbundance = "scaledTPM")
 message("Summarising to genes (lengthScaledTPM)...")
 txi.sum.len <- summarizeToGene(txi.tx, tx2gene,
+                               ignoreTxVersion = TRUE,
                                countsFromAbundance = "lengthScaledTPM")
 
 if (!dir.exists(args$outpath)) {
