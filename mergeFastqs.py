@@ -25,13 +25,13 @@ def get_args():
                         help="Pattern used to decide which files to merge." +
                              "Should have the format [CODE][SEP]...[CODE], " +
                              "where SEP is the separator and CODE is one of: " +
-                             "K = Keep this section, " +
-                             "M = Merge using this section, " +
-                             "R = Remove this section. " +
-                             "For example if the filname structure was: " +
-                             "'SAMPLE_READ_LANE_DATE', " +
-                             "to merge on LANE and remove DATE the pattern " +
-                             "would be 'K_K_M_R'.",
+                             "K = Keep this section or " +
+                             "M = Merge using this section, "
+                             "For example if the filename structure was: " +
+                             "'SAMPLE_READ_LANE_DATE.fastq', " +
+                             "to merge on LANE and DATE the pattern " +
+                             "would be 'K_K_M_M', which would produce a" +
+                             "merged file named 'SAMPLE_DATE.fastq'",
                         required=True)
     parser.add_argument("fastqs",
                         metavar="FASTQ",
@@ -63,24 +63,6 @@ def merge_filename(filename, pat, sep):
             merge_file.append(file_sec)
 
     return sep.join(merge_file) + "." + ext
-
-
-def process_pattern(pat, sep):
-    """
-    Process the pattern argument to determine what to do with each filename
-    section.
-    """
-
-    print("Input pattern is: " + pat)
-    split_pat = pat.split(sep)
-    print("Split pattern is: " + str(split_pat))
-    merge_pat = []
-    for section in split_pat:
-        if (section == "K" or section == "M"):
-            merge_pat.append(section)
-    print("Merged pattern is: " + str(merge_pat))
-
-    return split_pat
 
 
 def group_filenames(filenames, pat, sep):
@@ -119,10 +101,8 @@ def main():
     """
 
     args = get_args()
-    pattern = process_pattern(args.pattern, args.separator)
-
+    pattern = args.pattern.split(args.sep)
     file_groups = group_filenames(args.fastqs, pattern, args.separator)
-
     merge_files(file_groups, args.outdir)
 
 
