@@ -124,8 +124,8 @@ def merge_files(groups, outdir):
     logger = logging.getLogger("mergeFQs." + "merge")
 
     for groupname, filenames in groups.iteritems():
-        logger.info("Merging group " + groupname + " with " + len(filenames) +
-                    "files...")
+        logger.info("Merging group " + groupname + " with " +
+                    str(len(filenames)) + "files...")
         outpath = os.path.join(outdir, groupname)
         logger.info("Creating merge file " + outpath + "...")
         with open(outpath, "wb") as outfile:
@@ -153,7 +153,7 @@ def main():
     logger.info("Example merge: " + ex_file + " -> " +
                 os.path.join(args.outdir, ex_merge))
     file_groups = group_filenames(args.fastqs, pattern, args.separator)
-    logger.info(len(file_groups) + " file groups found...")
+    logger.info(str(len(file_groups)) + " file groups found...")
     merge_files(file_groups, args.outdir)
 
 
