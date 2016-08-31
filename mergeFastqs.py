@@ -147,7 +147,7 @@ def main():
 
     logger.info(str(len(args.fastqs)) + " input files provided")
     logger.info("Filename pattern is " + args.pattern)
-    pattern = args.pattern.split(args.sep)
+    pattern = args.pattern.split(args.separator)
     ex_file = args.fastqs[0]
     ex_merge = merge_filename(ex_file, pattern, args.separator)
     logger.info("Example merge: " + ex_file + " -> " +
