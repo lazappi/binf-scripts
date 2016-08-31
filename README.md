@@ -45,6 +45,16 @@ sampleFastq.R
 **Usage:** `sampleFastq [-h] -1 PAIR1 [PAIR1 ...] [-2 [PAIR2 [PAIR2 ...]]]
            [-n NREADS] [-s SEED] [-o OUTPATH]`
 
+mergeFastqs.py
+-------------
+
+**Description:** Merge FASTQ files based on a filename pattern.
+
+**Language:** Python
+
+**Usage:** `mergeFastqs [-h] [-s SEPARATOR] [-o OUTDIR] -p PATTERN FASTQ
+           [FASTQ ...]`
+
 kallistoMulti.py
 ----------------
 
