@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
 Merge multiple FASTQ files based on a filename pattern.
+
+Merging based on https://gsl.hudsonalpha.org/information/software/merge_fastqs_by_lib
 """
 
 import argparse
@@ -12,7 +14,7 @@ from collections import defaultdict
 
 def get_args():
     """
-    Get command line arguments
+    Get command line arguments.
     """
 
     parser = argparse.ArgumentParser(description="Merge FASTQ files based on name")
@@ -24,15 +26,15 @@ def get_args():
                         default=os.getcwd())
     parser.add_argument("-p", "--pattern",
                         help="Pattern used to decide which files to merge." +
-                             "Should have the format [CODE][SEP]...[CODE], " +
-                             "where SEP is the separator and CODE is one of: " +
-                             "K = Keep this section or " +
-                             "M = Merge this section, "
-                             "For example if the filename structure was: " +
-                             "'SAMPLE_READ_LANE_DATE.fastq', " +
-                             "to merge on LANE and DATE the pattern " +
-                             "would be 'K_K_M_M', which would produce a" +
-                             "merged file named 'SAMPLE_DATE.fastq'",
+                        "Should have the format [CODE][SEP]...[CODE], " +
+                        "where SEP is the separator and CODE is one of: " +
+                        "K = Keep this section or " +
+                        "M = Merge this section, "
+                        "For example if the filename structure was: " +
+                        "'SAMPLE_READ_LANE_DATE.fastq', " +
+                        "to merge on LANE and DATE the pattern " +
+                        "would be 'K_K_M_M', which would produce a" +
+                        "merged file named 'SAMPLE_DATE.fastq'",
                         required=True)
     parser.add_argument("fastqs",
                         metavar="FASTQ",
@@ -48,6 +50,9 @@ def setup_logging(outdir):
     Setup logging system.
 
     Log is written to 'mergeFastqs.log'.
+
+    Args:
+        outdir: Output directory
     """
 
     logger = logging.getLogger("mergeFQs")
@@ -82,13 +87,26 @@ def setup_logging(outdir):
 def merge_filename(filename, pat, sep):
     """
     Apply a merging pattern to a filename.
+
+    Sections of the base filename are kept according to the provided pattern.
+
+    Args:
+        filename: The filename to merge.
+        pat: The merging pattern to use.
+        sep: String separating filename sections.
+
+    Return:
+        String containing the merged filename.
     """
 
+    # Extract filename and extension
+    # Don't use 'os.splitex' because extension could have multiple parts
     filebase = os.path.basename(filename).split(".")[0]
     ext = ".".join(os.path.basename(filename).split(".")[1:])
 
     split_file = filebase.split(sep)
 
+    # Exit if filename does not match pattern
     if not len(split_file) == len(pat):
         sys.exit("File " + filename + " does not match pattern " + str(pat))
 
@@ -105,6 +123,15 @@ def merge_filename(filename, pat, sep):
 def group_filenames(filenames, pat, sep):
     """
     Group files based on their merged file names.
+
+    Args:
+        filenames: List of filename strings to group.
+        pat: Merging patter to use for grouping.
+        sep: String separating filename sections.
+
+    Returns:
+        Dictionary with group names as keys and lists of original filenames as
+        values.
     """
 
     groups = defaultdict(list)
@@ -113,24 +140,30 @@ def group_filenames(filenames, pat, sep):
         group = merge_filename(filename, pat, sep)
         groups[group].append(filename)
 
-    return(groups)
+    return groups
 
 
 def merge_files(groups, outdir):
     """
     Merge files that belong to the same filename group.
+
+    Merged files are created in the output directory.
+
+    Args:
+        groups: Dictionary of filename groups from `group_filenames`.
+        outdir: Output path for merged files.
     """
 
     logger = logging.getLogger("mergeFQs." + "merge")
 
     for groupname, filenames in groups.iteritems():
         logger.info("Merging group " + groupname + " with " +
-                    str(len(filenames)) + "files...")
+                    str(len(filenames)) + " files...")
         outpath = os.path.join(outdir, groupname)
         logger.info("Creating merge file " + outpath + "...")
         with open(outpath, "wb") as outfile:
             for filename in filenames:
-                logger.info("Adding file " + filename + "...")
+                logger.info("Adding " + filename + "...")
                 with open(filename, "rb") as fq_file:
                     shutil.copyfileobj(fq_file, outfile)
 
@@ -138,6 +171,11 @@ def merge_files(groups, outdir):
 def main():
     """
     Run main code
+
+    1. Get arguments
+    2. Setup logging
+    3. Group filenames
+    4. Merge files
     """
 
     args = get_args()
