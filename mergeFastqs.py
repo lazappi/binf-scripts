@@ -4,6 +4,7 @@ Merge multiple FASTQ files based on a filename pattern.
 """
 
 import argparse
+import logging
 import os
 import sys
 import shutil
@@ -26,7 +27,7 @@ def get_args():
                              "Should have the format [CODE][SEP]...[CODE], " +
                              "where SEP is the separator and CODE is one of: " +
                              "K = Keep this section or " +
-                             "M = Merge using this section, "
+                             "M = Merge this section, "
                              "For example if the filename structure was: " +
                              "'SAMPLE_READ_LANE_DATE.fastq', " +
                              "to merge on LANE and DATE the pattern " +
@@ -40,6 +41,42 @@ def get_args():
     args = parser.parse_args()
 
     return args
+
+
+def setup_logging(outdir):
+    """
+    Setup logging system.
+
+    Log is written to 'mergeFastqs.log'.
+    """
+
+    logger = logging.getLogger("mergeFQs")
+    logger.setLevel(logging.DEBUG)
+
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    log_file = os.path.join(outdir, "mergeFastqs.log")
+
+    # create file handler which logs even debug messages
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setLevel(logging.DEBUG)
+
+    # create console handler with a higher log level
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+
+    # create formatter and add it to the handlers
+    format_str = "[%(asctime)s] %(levelname)s %(name)s: %(message)s"
+    formatter = logging.Formatter(format_str, "%Y-%m-%d %H:%M:%S")
+    file_handler.setFormatter(formatter)
+    format_str = "[%(asctime)s] %(message)s"
+    formatter = logging.Formatter(format_str, "%H:%M:%S")
+    console_handler.setFormatter(formatter)
+
+    # add the handlers to logger
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
 
 
 def merge_filename(filename, pat, sep):
@@ -84,13 +121,16 @@ def merge_files(groups, outdir):
     Merge files that belong to the same filename group.
     """
 
+    logger = logging.getLogger("mergeFQs." + "merge")
+
     for groupname, filenames in groups.iteritems():
-        print("Merging group " + groupname + "...")
+        logger.info("Merging group " + groupname + " with " + len(filenames) +
+                    "files...")
         outpath = os.path.join(outdir, groupname)
-        print("Creating merge file " + outpath + "...")
+        logger.info("Creating merge file " + outpath + "...")
         with open(outpath, "wb") as outfile:
             for filename in filenames:
-                print("Adding file " + filename + "...")
+                logger.info("Adding file " + filename + "...")
                 with open(filename, "rb") as fq_file:
                     shutil.copyfileobj(fq_file, outfile)
 
@@ -101,8 +141,19 @@ def main():
     """
 
     args = get_args()
+
+    setup_logging(args.outdir)
+    logger = logging.getLogger("mergeFQs." + __name__)
+
+    logger.info(str(len(args.fastqs)) + " input files provided")
+    logger.info("Filename pattern is " + args.pattern)
     pattern = args.pattern.split(args.sep)
+    ex_file = args.fastqs[0]
+    ex_merge = merge_filename(ex_file, pattern, args.separator)
+    logger.info("Example merge: " + ex_file + " -> " +
+                os.path.join(args.outdir, ex_merge))
     file_groups = group_filenames(args.fastqs, pattern, args.separator)
+    logger.info(len(file_groups) + " file groups found...")
     merge_files(file_groups, args.outdir)
 
 
