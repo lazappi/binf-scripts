@@ -9,7 +9,7 @@ library("optparse")
 opt.list = list(
     make_option(c("-d", "--database"),
                 type    = "character",
-                default = "SRAmetadb.sqlite", 
+                default = "./SRAmetadb.sqlite", 
                 help    = paste("Path to SRA database file, if does not exist",
                                 "database will be download to this location.",
                                 "Default is 'SRAmetadb.sqlite'.")),
@@ -26,9 +26,9 @@ opt.list = list(
                                 "/usr/local/aspera/connect/etc/asperaweb_id_dsa.openssh'.")),
     make_option(c("-t", "--type"),
                 type    = "character",
-                default = "fastq",
+                default = "sra",
                 help    = paste("Type of files to download. Options are",
-                                "'fastq' (default) or `sra`."))
+                                "'sra' (default) or `fastq`."))
 )
 
 # Read options from command line
@@ -43,6 +43,7 @@ suppressPackageStartupMessages(library("SRAdb"))
 library("DBI")
 
 # Check if SRA databases exists and download if needed
+
 message("Checking if database exists...")
 if (!file.exists(opt$database)) {
     message("Database file not found.")
@@ -78,6 +79,14 @@ for (idx in 1:num.ids) {
     id <- ids[idx]
     message(paste0("Processing ", id, ", ", idx, " of ", num.ids, "..."))
     meta <- listSRAfile(id, sra.con, fileType = opt$type)
+    study <- unique(meta$study)
+    query <- paste("SELECT * FROM experiment WHERE study_accession IN (\'",
+                   study,"\')",sep="")
+    message(paste("Query:", query))
+    exp <- dbGetQuery(sra.con, query)
+    meta <- merge(meta, exp, by.x="experiment", by.y="experiment_accession")
+    # Clean up sample titles so they can be used as file names
+    meta$title <- gsub(" ","_",gsub(":","",meta$title))
     message(paste(nrow(meta), "SRA records found"))
     meta.path <- file.path(opt$outpath, paste0(id, ".metadata"))
     write.table(meta,
@@ -86,14 +95,21 @@ for (idx in 1:num.ids) {
                 sep       = "\t",
                 row.names = FALSE)
     message(paste("Metadata saved to", meta.path))
-    message("Downloading fastq files...")
+    message("Downloading files...")
     getSRAfile(id,
-               sra.con,
-               destDir  = opt$outpath,
-               fileType = opt$type,
-               srcType  = "fasp",
-               ascpCMD  = opt$ascpCMD)
+                sra.con,
+                destDir  = opt$outpath,
+                fileType = opt$type,
+                srcType  = "fasp",
+                ascpCMD  = opt$ascpCMD)
+    message("Renaming files...")
+
+    files <- basename(meta$ftp)
+
+    file.rename(file.path(opt$outpath, files),
+                file.path(opt$outpath, paste(meta$title, files, sep = ".")))
     message(paste(id, "finished"))
 }
 
 message("Done!")
+
