@@ -103,11 +103,13 @@ for (idx in 1:num.ids) {
                 srcType  = "fasp",
                 ascpCMD  = opt$ascpCMD)
     message("Renaming files...")
-    file.rename(file.path(opt$outpath,paste(meta$run,opt$type,sep=".")),
-                file.path(opt$outpath,paste(meta$title,meta$run,opt$type,sep=".")))
+
+    files <- basename(meta$ftp)
+
+    file.rename(file.path(opt$outpath, files),
+                file.path(opt$outpath, paste(meta$title, files, sep = ".")))
     message(paste(id, "finished"))
 }
 
 message("Done!")
-
 
